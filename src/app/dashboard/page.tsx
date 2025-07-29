@@ -1,78 +1,99 @@
-// src/app/dashboard/page.tsx
 "use client";
 
 import Topbar from "./components/Topbar";
 import UsersBarChart from "@/components/charts/BarChart";
 import PieChart from "@/components/charts/PieChart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import ThemeToggle from "@/components/ThemeToggle";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
 
 export default function DashboardPage() {
+  const [loading, setLoading] = useState(true);
+
+  // Simulate loading state
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-gray-100 dark:bg-gray-950 transition-colors duration-300">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-screen overflow-hidden">
-      <div className="flex-1 flex flex-col overflow-y-auto bg-gray-100 dark:bg-gray-950">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-800">
+      <div className="flex-1 flex flex-col overflow-y-auto bg-gray-100 dark:bg-gray-950 transition-colors duration-500">
+        
+        {/* Topbar */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm sticky top-0 z-10 transition-all">
           <Topbar />
+          
         </div>
 
-        <main className="p-6 space-y-6">
-          {/* Stats Cards */}
+        <main className="p-6 space-y-8">
+          {/* Stat Cards */}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            <Card>
-              <CardHeader>
-                <CardTitle>Users</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-2xl font-bold">12,452</p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  ↗︎ 12% from last month
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Revenue</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-2xl font-bold">$21,000</p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  ↘︎ 5% from last month
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>New Signups</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-2xl font-bold">1,202</p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  ↗︎ 8% this week
-                </p>
-              </CardContent>
-            </Card>
+            {[
+              { title: "Users", value: "12,452", change: "↗︎ 12% from last month" },
+              { title: "Revenue", value: "$21,000", change: "↘︎ 5% from last month" },
+              { title: "New Signups", value: "1,202", change: "↗︎ 8% this week" },
+            ].map((item, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: index * 0.1 }}
+              >
+                <Card className="hover:shadow-lg hover:scale-[1.02] transition-all duration-300 dark:bg-gray-900">
+                  <CardHeader>
+                    <CardTitle className="text-lg">{item.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-3xl font-bold">{item.value}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{item.change}</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
           </div>
 
           {/* Charts Section */}
           <div className="grid gap-6 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Users Overview</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <UsersBarChart />
-              </CardContent>
-            </Card>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.2 }}
+            >
+              <Card className="hover:shadow-lg transition-all duration-300 dark:bg-gray-900">
+                <CardHeader>
+                  <CardTitle>Users Overview</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <UsersBarChart />
+                </CardContent>
+              </Card>
+            </motion.div>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Demographics</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <PieChart />
-              </CardContent>
-            </Card>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.3 }}
+            >
+              <Card className="hover:shadow-lg transition-all duration-300 dark:bg-gray-900">
+                <CardHeader>
+                  <CardTitle>Demographics</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <PieChart />
+                </CardContent>
+              </Card>
+            </motion.div>
           </div>
         </main>
       </div>

@@ -16,12 +16,14 @@ const data = [
   { name: "Other", value: 100 },
 ];
 
-const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ff8042"];
+const COLORS = ["#6366f1", "#22c55e", "#facc15", "#f97316"];
 
 export default function PieChart() {
   return (
-    <div className="rounded-xl border bg-background p-4 shadow-md dark:bg-gray-900">
-      <h3 className="mb-4 text-lg font-semibold">User Device Distribution</h3>
+    <div className="rounded-2xl border bg-white dark:bg-gray-900 p-6 shadow-md">
+      <h3 className="mb-4 text-lg font-semibold text-gray-800 dark:text-gray-100">
+        User Device Distribution
+      </h3>
       <ResponsiveContainer width="100%" height={250}>
         <RePieChart>
           <Pie

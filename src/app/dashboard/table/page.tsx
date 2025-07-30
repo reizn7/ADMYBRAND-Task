@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { saveAs } from 'file-saver';
+import { saveAs } from "file-saver";
 import jsPDF from "jspdf";
-import autoTable from 'jspdf-autotable';
+import autoTable from "jspdf-autotable";
 
 interface User {
   name: string;
@@ -33,19 +33,19 @@ export default function TablePage() {
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [page, setPage] = useState(1);
 
-  // Optional: Simulated real-time updates
+  // Simulate real-time status updates
   useEffect(() => {
-  const interval = setInterval(() => {
-       setUsers(prev =>
-       prev.map(user =>
-         Math.random() > 0.5
-           ? { ...user, status: STATUSES[Math.floor(Math.random() * STATUSES.length)] }
-          : user
-       )
-     );
-   }, 5000);
+    const interval = setInterval(() => {
+      setUsers(prev =>
+        prev.map(user =>
+          Math.random() > 0.5
+            ? { ...user, status: STATUSES[Math.floor(Math.random() * STATUSES.length)] }
+            : user
+        )
+      );
+    }, 5000);
     return () => clearInterval(interval);
- }, []);
+  }, []);
 
   const handleSort = (key: keyof User) => {
     if (sortKey === key) {
@@ -54,6 +54,7 @@ export default function TablePage() {
       setSortKey(key);
       setSortOrder("asc");
     }
+    setPage(1); // reset to first page
   };
 
   const filteredUsers = users.filter(user =>
@@ -73,6 +74,7 @@ export default function TablePage() {
 
   const handlePrev = () => setPage(page > 1 ? page - 1 : 1);
   const handleNext = () => setPage(page < totalPages ? page + 1 : totalPages);
+  const handlePageClick = (pageNumber: number) => setPage(pageNumber);
 
   const exportCSV = () => {
     const headers = "Name,Email,Status\n";
@@ -114,7 +116,7 @@ export default function TablePage() {
           onChange={e => { setStatusFilter(e.target.value); setPage(1); }}
           className="border px-3 py-1.5 rounded-md text-sm"
         >
-          <option value="">All Statuses</option>
+          <option value="">All Status</option>
           {STATUSES.map(status => (
             <option key={status} value={status}>{status}</option>
           ))}
@@ -129,22 +131,13 @@ export default function TablePage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead
-                    onClick={() => handleSort("name")}
-                    className="cursor-pointer"
-                  >
+                  <TableHead onClick={() => handleSort("name")} className="cursor-pointer">
                     Name {sortKey === "name" && (sortOrder === "asc" ? "▲" : "▼")}
                   </TableHead>
-                  <TableHead
-                    onClick={() => handleSort("email")}
-                    className="cursor-pointer"
-                  >
+                  <TableHead onClick={() => handleSort("email")} className="cursor-pointer">
                     Email {sortKey === "email" && (sortOrder === "asc" ? "▲" : "▼")}
                   </TableHead>
-                  <TableHead
-                    onClick={() => handleSort("status")}
-                    className="cursor-pointer"
-                  >
+                  <TableHead onClick={() => handleSort("status")} className="cursor-pointer">
                     Status {sortKey === "status" && (sortOrder === "asc" ? "▲" : "▼")}
                   </TableHead>
                 </TableRow>
@@ -171,13 +164,25 @@ export default function TablePage() {
         </CardContent>
       </Card>
 
-      <div className="flex items-center justify-between mt-4">
+      {/* Pagination Controls */}
+      <div className="flex items-center justify-between mt-4 flex-wrap gap-2">
         <Button onClick={handlePrev} disabled={page === 1} variant="outline">
           Prev
         </Button>
-        <span className="text-sm">
-          Page {page} of {totalPages}
-        </span>
+
+        <div className="flex flex-wrap gap-2">
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+            <Button
+              key={p}
+              onClick={() => handlePageClick(p)}
+              variant={p === page ? "default" : "outline"}
+              className="w-10 p-0"
+            >
+              {p}
+            </Button>
+          ))}
+        </div>
+
         <Button onClick={handleNext} disabled={page === totalPages} variant="outline">
           Next
         </Button>
